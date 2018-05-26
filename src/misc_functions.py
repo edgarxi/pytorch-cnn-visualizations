@@ -11,7 +11,7 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 from torchvision import models
-
+from DensenetModels import DenseNet121
 
 def convert_to_grayscale(cv2im):
     """
@@ -148,6 +148,7 @@ def get_positive_negative_saliency(gradient):
     neg_saliency = (np.maximum(0, -gradient) / -gradient.min())
     return pos_saliency, neg_saliency
 
+pathModel = '../models/m-25012018-123527.pth.tar'
 
 def get_params(example_index):
     """
@@ -166,7 +167,8 @@ def get_params(example_index):
     # Pick one of the examples
     example_list = [['../input_images/snake.jpg', 56],
                     ['../input_images/cat_dog.png', 243],
-                    ['../input_images/spider.png', 72]]
+                    ['../input_images/spider.png', 72],
+                    ['../input_images/pneumonia_1.png',6]]
     selected_example = example_index
     img_path = example_list[selected_example][0]
     target_class = example_list[selected_example][1]
@@ -176,9 +178,11 @@ def get_params(example_index):
     # Process image
     prep_img = preprocess_image(original_image)
     # Define model
-    pretrained_model = models.alexnet(pretrained=True)
+    model = DenseNet121(14, True)
+    pretrained_model = torch.load(pathModel, map_location = lambda storage, loc: storage)
+    model.load_state_dict(pretrained_model['state_dict'], strict = False)
     return (original_image,
             prep_img,
             target_class,
             file_name_to_export,
-            pretrained_model)
+            model.densenet121)

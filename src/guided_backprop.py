@@ -54,7 +54,7 @@ class GuidedBackprop():
         self.model.zero_grad()
         # Target for backprop
         one_hot_output = torch.FloatTensor(1, model_output.size()[-1]).zero_()
-        one_hot_output[0][target_class] = 1
+        one_hot_output[0][target_class] = 1 #what does this do?
         # Backward pass
         model_output.backward(gradient=one_hot_output)
         # Convert Pytorch variable to numpy array
@@ -64,7 +64,7 @@ class GuidedBackprop():
 
 
 if __name__ == '__main__':
-    target_example = 0  # Snake
+    target_example = -1  # the LUNG
     (original_image, prep_img, target_class, file_name_to_export, pretrained_model) =\
         get_params(target_example)
 
